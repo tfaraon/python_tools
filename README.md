@@ -1,6 +1,6 @@
 Here are stored some scripts i made during my studies. 
 
-#Modelisation
+# Modelisation
 
 **Delft3D_Quicktools** contains scripts i created to use Delft3D
 
@@ -8,7 +8,7 @@ Here are stored some scripts i made during my studies.
 
 **SWAN_toolbox** is a quick toolbox to create simple SWAN simulations
 
-#Fieldwork
+# Fieldwork
 
 **Instruments** contains some tools to read, clean, and analyse field data from pressure and current meters with FFT, timeseries, ...
 
