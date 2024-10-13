@@ -1,4 +1,6 @@
-# python_tools
-A bunch of tools i created for my work. 
+In this folder are stored some scripts made to read Delft3D output files for easier plotting.
 
-The content is very varied and is only intended to store my scripts. 
+Basically it extracts Netcdf data and allows it to be stored in python vars.
+
+
+To use it, just work in D3D_output_main.py and use the modules FLOW and WAVE readers.
