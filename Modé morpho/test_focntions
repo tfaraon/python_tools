@@ -1,0 +1,108 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Dec 14 15:51:53 2023
+
+@author: tfaraon
+
+"""
+import numpy as np
+import File_reader as reader
+from tqdm import tqdm 
+
+def diff_explicite_upgrade(inp_shoreline, x, r, time, CL1, CL2): 
+    shoreline = inp_shoreline.copy()
+    shoreline[0] = CL1
+    shoreline[-1] = CL2
+
+    # Créer une variable temporaire pour stocker l'itération précédente
+    shoreline_prev = shoreline.copy()
+    
+    for _ in tqdm(time):
+        #J'ai actuellement une erreur ici parceque r est 2 valeurs plus grandes que shoreline. #TODO
+        #Il faut trouver un moyen de tronquer r
+        shoreline[1:-1] = r[2:] * shoreline_prev[2:] + (1-2*r[1:-1]) * shoreline_prev[1:-1] + r[:-2]*shoreline_prev[:-2] #ValueError: Unable to coerce to Series, length must be 100: given 98 
+        
+        erosion = (np.sum(np.abs(shoreline_prev)) - np.sum(np.abs(shoreline)))/len(shoreline)
+        shoreline += erosion
+        # Mettre à jour la variable temporaire avec la nouvelle valeur de shoreline
+        shoreline_prev = shoreline.copy()
+        shoreline[0] += erosion
+        shoreline[-1] += erosion
+
+    return shoreline
+
+
+def diff_explicite_upgrade_V2(inp_shoreline, x, r, time, CL1, CL2):
+    shoreline = inp_shoreline.copy()
+    shoreline[0] = CL1
+    shoreline[-1] = CL2
+
+    shoreline_prev = shoreline.copy()
+    
+    for _ in tqdm(time):
+        for i in range(1, len(x) - 1):
+            shoreline[i] = r[i-1] * shoreline_prev[i+1] + (1-2*r[i]) * shoreline_prev[i] + r[i]*shoreline_prev[i-1]
+
+        erosion = (np.sum(np.abs(shoreline_prev)) - np.sum(np.abs(shoreline))) / len(shoreline)
+        shoreline += erosion
+        shoreline_prev = shoreline.copy()
+        shoreline[0] += erosion
+        shoreline[-1] += erosion
+
+    return shoreline
+
+def calcul_non_vectorised(inp_shoreline, x, r, time, CL1, CL2): 
+    
+    #création d'une version non vectorisée plus simple à coder pour le moment
+    
+    shoreline = inp_shoreline.copy()
+    shoreline[0] = CL1
+    shoreline[-1] = CL2
+    
+    for index, row in df.iterrows():
+        for nom_colonne, valeur in row.iteritems():
+            
+    
+    return shoreline
+    
+
+
+
+g = 9.81
+K = 0.77
+PI = np.pi
+YEAR_TO_SECONDS = 365.25*24*3600
+CL1 = 0
+CL2 = 0
+
+DEFAULT_Hs = 0.5
+DEFAULT_Tp = 7 
+DEFAULT_rho_eau = 1024
+DEFAULT_rho_sed = 2700
+DEFAULT_porosite = 0.3
+DEFAULT_profondeur_fermeture = 20
+DEFAULT_hauteur_berme = 1
+DEFAULT_dt = 0.1
+DEFAULT_dx = 100
+
+Hs = reader.load_waveheight()
+Tp = reader.load_wavelength()
+rho_eau = DEFAULT_rho_eau
+rho_sed = DEFAULT_rho_sed
+porosite = DEFAULT_porosite
+profondeur_fermeture = DEFAULT_profondeur_fermeture
+hauteur_berme = DEFAULT_hauteur_berme
+
+dt = DEFAULT_dt
+x, dx = reader.load_computegrid()
+time = np.arange(0, 1000, dt)
+
+shoreline = reader.load_shoreline()
+
+Cl = (K * rho_eau * g * Hs**2 * Tp)/(64*PI*(rho_sed-rho_eau)*(1-porosite))
+G0 = Cl / (profondeur_fermeture + hauteur_berme)                                                              
+
+r = (G0 * dt * YEAR_TO_SECONDS)/(dx**2)
+
+diff_explicite_upgrade(shoreline, x, r, time, CL1, CL2)

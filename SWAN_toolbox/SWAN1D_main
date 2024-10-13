@@ -1,0 +1,69 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Dec  8 18:00:06 2023
+
+@author: tfaraon
+"""
+import SWAN1D_toolbox as swan
+
+#%% User inputs and run single plotting
+#Cette partie permet de plotter les résultats pour un seul scénario et une seule condition
+
+dossier= '/home/tfaraon/Documents/Cours/projet/SWAN/test2/H2P500/Outputs'
+points = {'Offshore' : 10,
+          'P2' : 200,
+          'P3': 450,
+          'P4': 600}
+
+data = swan.load_SWAN_outputs(dossier) 
+profil = data.get('profil')
+  
+swan.plot_profil(profil, points)
+swan.plot_spectrum(data)
+
+#%%User inputs for multi plotting
+#Cette partie permet de plotter tous les résultats d'un scénario. 
+H = 1  
+dossiers = [f'/home/tfaraon/Documents/Cours/projet/SWAN/H{H}P0/Outputs',
+    f'/home/tfaraon/Documents/Cours/projet/SWAN/H{H}P150/Outputs',
+    f'/home/tfaraon/Documents/Cours/projet/SWAN/H{H}P300/Outputs',
+    f'/home/tfaraon/Documents/Cours/projet/SWAN/H{H}P500/Outputs',
+    f'/home/tfaraon/Documents/Cours/projet/SWAN/H{H}P1000/Outputs']
+
+points = {'Offshore' : 10,
+          'P2' : 200,
+          'P3': 450,
+          'P4': 600}
+
+data = swan.load_multi(dossiers)
+
+swan.plot_multi_hs(data,[0,150,300,500,1000], points)
+swan.plot_multi_diss(data, [0,150,300,500,1000],points)
+
+swan.swan_subplots(data, [0,150,300,500,1000], 'hsig', 'Diss', points)
+#%% Large handler for damping
+#calcul de la dissipation selon les scénarios d'herbier
+
+dossiers1 = ['/home/tfaraon/Documents/Cours/projet/SWAN/test2/H1P0/Outputs',
+    '/home/tfaraon/Documents/Cours/projet/SWAN/test2/H1P150/Outputs',
+    '/home/tfaraon/Documents/Cours/projet/SWAN/test2/H1P300/Outputs',
+    '/home/tfaraon/Documents/Cours/projet/SWAN/test2/H1P500/Outputs',
+    '/home/tfaraon/Documents/Cours/projet/SWAN/test2/H1P1000/Outputs']
+
+dossiers2 =  ['/home/tfaraon/Documents/Cours/projet/SWAN/test2/H2P0/Outputs',
+    '/home/tfaraon/Documents/Cours/projet/SWAN/test2/H2P150/Outputs',
+    '/home/tfaraon/Documents/Cours/projet/SWAN/test2/H2P300/Outputs',
+    '/home/tfaraon/Documents/Cours/projet/SWAN/test2/H2P500/Outputs',
+    '/home/tfaraon/Documents/Cours/projet/SWAN/test2/H2P1000/Outputs']
+
+dossiers3 = ['/home/tfaraon/Documents/Cours/projet/SWAN/test2/H3P0/Outputs',
+    '/home/tfaraon/Documents/Cours/projet/SWAN/test2/H3P150/Outputs',
+    '/home/tfaraon/Documents/Cours/projet/SWAN/test2/H3P300/Outputs',
+    '/home/tfaraon/Documents/Cours/projet/SWAN/test2/H3P500/Outputs',
+    '/home/tfaraon/Documents/Cours/projet/SWAN/test2/H3P1000/Outputs']
+
+large_data = [dossiers1,dossiers2,dossiers3]
+hs = [1,2,3]
+tp = [8,10,12]
+swan.large_handler(large_data, hs , tp , [0,150,300,500,1000])
