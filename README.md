@@ -1,6 +1,5 @@
-In this folder are stored some scripts made to read Delft3D output files for easier plotting.
+Here are stored some scripts i made during my studies. 
 
-Basically it extracts Netcdf data and allows it to be stored in python vars.
+Delft3D_Quicktools contains scripts i created to use Delft3D
 
-
-To use it, just work in D3D_output_main.py and use the modules FLOW and WAVE readers.
+XB_toolbox contains scripts i used during my internship to create XBeach simulations. They aren't too evolved but they work. 
